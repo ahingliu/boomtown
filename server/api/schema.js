@@ -24,9 +24,14 @@ module.exports = gql`
       borrower: User
     }
 
-  type User {
-    _: Boolean
-  }
+    type User {
+        id: ID!
+        email: String!
+        fullname: String!
+        bio: String
+        items: [Item]
+        borrowed: [Item]
+      }      
 
   type Tag {
     _: Boolean
