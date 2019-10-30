@@ -13,9 +13,16 @@ const { gql } = require("apollo-server-express");
 module.exports = gql`
   # scalar Date
 
-  type Item {
-    _: Boolean
-  }
+  type Item {
+      id: ID!
+      title: String!
+      imageurl: String
+      description: String!
+      itemowner: User!
+      tags: [Tag]
+      created: Date!
+      borrower: User
+    }
 
   type User {
     _: Boolean
