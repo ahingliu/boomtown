@@ -22,19 +22,28 @@ module.exports = gql`
       tags: [Tag]
       created: Date!
       borrower: User
-    }
+  }
 
-    type User {
-        id: ID!
-        email: String!
-        fullname: String!
-        bio: String
-        items: [Item]
-        borrowed: [Item]
-      }      
+  type User {
+       id: ID!
+       email: String!
+       fullname: String!
+       bio: String
+       items: [Item]
+       borrowed: [Item]
+    }      
 
-  type Tag {
-    _: Boolean
+  type Tag {
+    id: ID!
+    title: String!
+  }
+
+  type File {
+      id: ID!
+      filename: String!
+      mimetype: String!
+      enconding: String!
+      itemid: ID!
   }
 
   type AuthPayload {
