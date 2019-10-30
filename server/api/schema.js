@@ -60,9 +60,12 @@ module.exports = gql`
     id: ID!
   }
 
-  input NewItemInput {
-    _: Boolean
-  }
+  input NewItemInput {
+      title: String!
+      description: String
+      tags: [AssignedTag]!
+    }
+    
 
   type Query {
     user(id: ID!): User
