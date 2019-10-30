@@ -60,23 +60,30 @@ module.exports = gql`
     id: ID!
   }
 
-  input NewItemInput {
-      title: String!
-      description: String
-      tags: [AssignedTag]!
+  input SignupInput {
+      fullname: String!
+      email: String!
+      password: String!
     }
     
-
-  type Query {
-    user(id: ID!): User
-    viewer: User
-    items(filter: ID): [Item]
-    tags: [Tag]
-  }
-
-  type Mutation {
-    addItem: Boolean
-  }
-`;
+    input LoginInput {
+      email: String!
+      password: String!
+    }
+    
+    type Query {
+      user(id: ID!): User
+      viewer: User
+      items(filter: ID): [Item]
+      tags: [Tag]
+    }
+    
+    type Mutation {
+      login(user: LoginInput!): AuthPayload!
+      logout: Boolean!
+      signup(user: SignupInput!): AuthPayload!
+      addItem(item: NewItemInput!):Item
+    }
+    `;
 
 
