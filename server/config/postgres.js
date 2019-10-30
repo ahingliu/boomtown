@@ -1,16 +1,14 @@
-const { Pool } = require('pg');
+const { Pool } = require('pg');
 
-module.exports = (app) => {
-  /**
-   * @TODO: Configuration Variables
-   *
-   *  Retrieve the necessary information to connect to Postgres
-   *  For example: app.get('PG_DB')
-   */
-  return new Pool({
-    /**
-     *  @TODO: Supply the correct configuration values to connect to postgres
-     */
-  });
+module.exports = (app) => {
+
+  return new Pool({
+    user: app.get('PG_USER'),
+    database: app.get('PG_DB'),
+    password: app.get('PG_PASSWORD'),
+    host: app.get('PG_HOST'),
+    connectionTimeoutMillis: 30000,
+    idleTimeoutMillis: 20000,
+  });
 };
 
