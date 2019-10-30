@@ -46,13 +46,16 @@ module.exports = gql`
       itemid: ID!
   }
 
-  type AuthPayload {
-    _: Boolean
+  type AuthPayload {
+     token: String
+     user: User
   }
-
-  input AssignedTag {
-    _: Boolean
+  
+  input AssignedTag {
+     id: ID!
+     title: String!
   }
+    
 
   input AssignedBorrower {
     _: Boolean
