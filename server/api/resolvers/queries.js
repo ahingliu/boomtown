@@ -2,10 +2,10 @@ const { ApolloError } = require("apollo-server");
 
 const queryResolvers = app => ({
   viewer(parent, args, { user }, info) {
-    if (user.token) {
-      return jwt.decode(user.toke, app.get('JW_SECRET'));
+    if (context.token) {
+      return jwt.decode(context.token, app.get('JW_SECRET'));
     } else
-    return null;
+      return null;
   },
   async user(parent, { id }, { pgResource }, info) {
     try {

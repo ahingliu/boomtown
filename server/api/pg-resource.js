@@ -56,47 +56,29 @@ module.exports = postgres => {
 
     async getItems(idToOmit) {
       const items = await postgres.query({
-        /**
-         *  @TODO:
-         *
-         *  idToOmit = ownerId
-         *
-         *  Get all Items. If the idToOmit parameter has a value,
-         *  the query should only return Items were the ownerid !== idToOmit
-         *
-         *  Hint: You'll need to use a conditional AND/WHERE clause
-         *  to your query text using string interpolation
-         */
-
-        text: ``,
+        text: `SELECT * FROM items WHERE ownerid != $1`, 
         values: idToOmit ? [idToOmit] : [],
       });
       return items.rows;
     },
     async getItemsForUser(id) {
       const items = await postgres.query({
-        /**
-         *  @TODO:
-         *  Get all Items for user using their id
-         */
-        text: ``,
+        text: `SELECT * FROM items WHERE ownerid = $1`, 
         values: [id],
       });
       return items.rows;
     },
     async getBorrowedItemsForUser(id) {
       const items = await postgres.query({
-        /**
-         *  @TODO:
-         *  Get all Items borrowed by user using their id
-         */
-        text: ``,
+        text: `SELECT * FROM items WHERE borrowerid =$1`, 
         values: [id],
       });
       return items.rows;
     },
     async getTags() {
-      const tags = await postgres.query(/* @TODO: Basic queries */);
+      const tags = await postgres.query({
+        text: `SELECT * FROM tags`
+      });
       return tags.rows;
     },
     async getTagsForItem(id) {
