@@ -79,6 +79,6 @@ module.exports = app => ({
       item: args.item,
       user
     })
-    return newItem
+    return newItem;
   }
 })
