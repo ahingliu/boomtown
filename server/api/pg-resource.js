@@ -56,7 +56,7 @@ module.exports = postgres => {
 
     async getItems(idToOmit) {
       const items = await postgres.query({
-        text: `SELECT * FROM items WHERE ownerid != $1`, 
+        text: `SELECT * FROM items`, 
         values: idToOmit ? [idToOmit] : [],
       });
       return items.rows;
@@ -83,88 +83,56 @@ module.exports = postgres => {
     },
     async getTagsForItem(id) {
       const tagsQuery = {
-        text: ``, // @TODO: Advanced query Hint: use INNER JOIN
+        text: `SELECT * FROM tags INNER JOIN itemtags ON taggs.id = itemtags.tagid WHERE itemtags.itemid = $1`, 
         values: [id],
       };
-
       const tags = await postgres.query(tagsQuery);
       return tags.rows;
     },
     async saveNewItem({ item, user }) {
-      /**
-       *  @TODO: Adding a New Item
-       *
-       *  Adding a new Item requires 2 separate INSERT statements.
-       *
-       *  All of the INSERT statements must:
-       *  1) Proceed in a specific order.
-       *  2) Succeed for the new Item to be considered added
-       *  3) If any of the INSERT queries fail, any successful INSERT
-       *     queries should be 'rolled back' to avoid 'orphan' data in the database.
-       *
-       *  To achieve #3 we'll ue something called a Postgres Transaction!
-       *  The code for the transaction has been provided for you, along with
-       *  helpful comments to help you get started.
-       *
-       *  Read the method and the comments carefully before you begin.
-       */
-
       return new Promise((resolve, reject) => {
-        /**
-         * Begin transaction by opening a long-lived connection
-         * to a client from the client pool.
-         * - Read about transactions here: https://node-postgres.com/features/transactions
-         */
         postgres.connect((err, client, done) => {
           try {
-            // Begin postgres transaction
-            client.query("BEGIN", async err => {
-              const { title, description, tags } = item;
+            client.query('BEGIN', async err => {
+              const { title, description, tags } = item
 
-              // Generate new Item query
-              // @TODO
-              // -------------------------------
-
-              // Insert new Item
-              // @TODO
-              // -------------------------------
-
-              // Generate tag relationships query (use the'tagsQueryString' helper function provided)
-              // @TODO
-              // -------------------------------
-
-              // Insert tags
-              // @TODO
-              // -------------------------------
-
-              // Commit the entire transaction!
-              client.query("COMMIT", err => {
-                if (err) {
-                  throw err;
-                }
-                // release the client back to the pool
-                done();
-                // Uncomment this resolve statement when you're ready!
-                // resolve(newItem.rows[0])
-                // -------------------------------
-              });
-            });
-          } catch (e) {
-            // Something went wrong
-            client.query("ROLLBACK", err => {
-              if (err) {
-                throw err;
+              const itemQuery = {
+                text: `INSERT INTO items(title, description, itemowner) VALUES ($1, $2, $3) RETURNING *`,
+                values: [title, description, user]
               }
-              // release the client back to the pool
-              done();
-            });
+              const newItem = await postgres.query(itemQuery)
+              const tagsWithItems = {
+                text: `INSERT INTO itemtags(tagid, itemid) VALUES ${tagsQueryString(
+                  [...tags],
+                  newItem.rows[0].id,
+                  ''
+                )} `,
+                values: tags.map(tag => tag.id)
+              }
+              await postgres.query(tagsWithItems)
+
+              client.query('COMMIT', err => {
+                if (err) {
+                  throw err
+                }
+                done()
+                resolve(newItem.rows[0])
+              })
+            })
+          } catch (e) {
+            client.query('ROLLBACK', err => {
+              if (err) {
+                throw err
+              }
+              done()
+            })
             switch (true) {
               default:
-                throw e;
+                throw e
             }
           }
-        });
-      });
-    },
-  };
-};
+        })
+      })
+    }
+  }
+}
