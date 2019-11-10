@@ -1,5 +1,6 @@
 const { ApolloServer } = require("apollo-server-express");
 const { makeExecutableSchema } = require("graphql-tools");
+const { AuthDirective } = require("../api/custom-directives");
 const typeDefs = require("../api/schema");
 let resolvers = require("../api/resolvers");
 
@@ -9,6 +10,9 @@ module.exports = ({ app, pgResource }) => {
   const schema = makeExecutableSchema({
     typeDefs,
     resolvers,
+    schemaDirectives: {
+      auth: AuthDirective
+    }
   });
 
   const apolloServer = new ApolloServer({

@@ -15,7 +15,7 @@ module.exports = gql`
     borrower: User
   }
 
-  type User {
+  type User @auth {
     id: ID!
     email: String!
     fullname: String!
@@ -82,4 +82,3 @@ module.exports = gql`
     addItem(item: NewItemInput!):Item
   }
 `;
-
