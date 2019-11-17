@@ -97,12 +97,12 @@ module.exports = postgres => {
               const { title, description, tags } = item
 
               const itemQuery = {
-                text: `INSERT INTO items(title, description, itemowner) VALUES ($1, $2, $3) RETURNING *`,
-                values: [title, description, user]
+                text: `INSERT INTO items(title, description, "ownerId") VALUES ($1, $2, $3) RETURNING *`,
+                values: [title, description, user.id]
               }
               const newItem = await postgres.query(itemQuery)
               const tagsWithItems = {
-                text: `INSERT INTO itemtags(tagid, itemid) VALUES ${tagsQueryString(
+                text: `INSERT INTO itemtags("tagId", "itemId") VALUES ${tagsQueryString(
                   [...tags],
                   newItem.rows[0].id,
                   ''

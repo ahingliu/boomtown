@@ -16,24 +16,25 @@ function generateToken(user, secret) {
 }
 
 module.exports = app => ({
-  async signup(parent, args, context) {
+  async signup(parent, { user }, context) {
     try {
-      const hashedPassword = await bcrypt.hash(args.user.password, 10)
+      let {fullname, email, password} = user;
+      const hashedPassword = await bcrypt.hash(password, 10)
 
-      const user = await context.pgResource.createUser({
-        fullname: args.user.fullName,
-        email: args.user.email,
+      const newUser = await context.pgResource.createUser({
+        fullname,
+        email,
         password: hashedPassword
       })
 
-      const token = generateToken(user, app.get('JWT_SECRET'))
+      const token = generateToken(newUser, app.get('JWT_SECRET'))
       setCookie({
         tokenName: app.get('JWT_COOKIE_NAME'),
         token,
         res: context.req.res
       })
 
-      return { token, user }
+      return { token, user: newUser }
     } catch (e) {
       throw new AuthenticationError(e)
     }
@@ -74,7 +75,8 @@ module.exports = app => ({
     return true
   },
   async addItem(parent, args, context, info) {
-    const user = await jwt.decode(context.token, app.get('JWT_SECRET'))
+    //const user = await jwt.decode(context.token, app.get('JWT_SECRET'))
+    const user = {id:"5"};
     const newItem = await context.pgResource.saveNewItem({
       item: args.item,
       user

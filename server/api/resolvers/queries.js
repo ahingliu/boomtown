@@ -10,11 +10,11 @@ const queryResolvers = app => ({
   async user(parent, { id }, { pgResource }, info) {
     try {
       const user = await pgResource.getUserById(id);
-      user.fullname = user.username;
       if (id === null) {
         return null;
-      } else
-      return user;
+      } else {
+        return user;
+      }
     } catch (e) {
       throw new ApolloError(e);
     }
@@ -29,7 +29,7 @@ const queryResolvers = app => ({
   },
   async tags(parent, args, {pgResource}, info) {
     try {
-      const items = await pgResource.getTags();
+      const tags = await pgResource.getTags();
       return tags;
     } catch (e) {
       throw new ApolloError(e);
