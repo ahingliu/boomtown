@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { ItemPreviewContext } from '../../context/ItemPreviewProvider'
+
 
 class ShareForm extends Component {
   constructor(props) {
